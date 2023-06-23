@@ -1,16 +1,19 @@
-// FAZER VERIFICAÇÃO DE TAREFAS IGUAIS. USAR ARRAY: arrayTarefa
 var btn = document.getElementById("btn");
 var inputText = document.getElementById("input-valor");
 var pErro = document.getElementById("error");
 var lista = document.querySelector(".lista");
 var body = document.getElementById("body");
-var arrayTarefa = [];
+var Tarefas = [];
 
-function criarItem() {
+function criarItem() { 
 
-    if (inputText.value == "" || inputText.value == null || inputText.value.length > 50) {
-        inputText.style.border= "1px solid red"
-        pErro.innerText = "Tarefa muito grande ou inexistente!"
+    if (Tarefas.includes(inputText.value)) {
+        erroInput()
+        return;
+    }
+
+    if (inputText.value == "" || inputText.value == null || inputText.value.length > 30) {
+        erroInput()
         return;
     }
 
@@ -40,24 +43,37 @@ function criarItem() {
     content.appendChild(p);
     divItem.appendChild(content);
     lista.appendChild(divItem);
-    
-    inputText.style.border = "1px solid black";
-    pErro.innerText = ""
+
+    normalInput()
 
     var tamanhoAtual = lista.clientHeight;
     lista.style.height = (tamanhoAtual + 98) + "px";
+
+    Tarefas.push(inputText.value);
+    inputText.value = ""
 
 }   
 
 // Verifica se a caixa foi marcada 
 function verificarSelecao(checkbox) {
-    var texto = checkbox.closest('.item')
+    var texto = checkbox.closest('.item');
 
     if (checkbox.checked == true) {
-        texto.style.textDecoration = "line-through"
+        texto.style.textDecoration = "line-through";
     } else {
-        texto.style.textDecoration = "none"
+        texto.style.textDecoration = "none";
     }
 }
+
+function erroInput() {
+    inputText.style.border= "1px solid red";
+    pErro.innerText = "Tarefa muito grande ou já existente!";
+}
+
+function normalInput() {
+    inputText.style.border = "1px solid black";
+    pErro.innerText = "";
+}
+
 
 btn.addEventListener("click", criarItem);
