@@ -1,6 +1,7 @@
 var btn = document.getElementById("btn");
 var inputText = document.getElementById("input-valor");
 var pErro = document.getElementById("error");
+var pAviso = document.getElementById("aviso");
 var lista = document.querySelector(".lista");
 var body = document.getElementById("body");
 var Tarefas = [];
@@ -68,11 +69,13 @@ function verificarSelecao(checkbox) {
 function erroInput() {
     inputText.style.border= "1px solid red";
     pErro.innerText = "Tarefa muito grande ou já existente!";
+    pAviso.innerText = "Limite de caracteres: 30";
 }
 
 function normalInput() {
     inputText.style.border = "1px solid black";
     pErro.innerText = "";
+    pAviso.innerText = "";
 }
 
 
