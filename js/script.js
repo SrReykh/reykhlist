@@ -9,9 +9,9 @@ var body = document.getElementById("body");
 
 
 class Tarefas {
-    constructor() {
+    constructor(listName) {
         this.lista = [];
-        this.listName = "tarefas";
+        this.listName = listName;
         
         this.criarItem = (text, autosave = true) => {
             if (this.lista.includes(text)) {
@@ -127,7 +127,7 @@ class Tarefas {
     }
 }
 
-var tarefas = new Tarefas;
+var tarefas = new Tarefas("tarefas");
 
 // Verifica se a caixa foi marcada 
 function verificarSelecao(checkbox) {
