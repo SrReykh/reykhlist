@@ -11,7 +11,9 @@ var body = document.getElementById("body");
 class Tarefas {
     constructor() {
         this.lista = [];
-        this.criarItem = (text) => {
+        this.listName = "tarefas";
+        
+        this.criarItem = (text, autosave = true) => {
             if (this.lista.includes(text)) {
                 erroInput()
                 return;
@@ -55,6 +57,8 @@ class Tarefas {
 
             this.lista.push(text);
             inputText.value = "";
+
+            if (autosave) this.bakeCookieList();
         }
 
         this.deletarItem = (id) => {
@@ -65,6 +69,7 @@ class Tarefas {
             for (let i=0; i<elementsOnList.length; i++) {
                 elementsOnList.item(i).id = i;
             }
+            this.bakeCookieList();
         }
         
         this.bulkDeletarItem = (ids) => {
@@ -77,6 +82,7 @@ class Tarefas {
             for (let j=0; j<elementsOnList.length; j++) {
                 elementsOnList.item(j).id = j;
             }
+            this.bakeCookieList();
         }
 
         this.clearItens = () => {
@@ -85,6 +91,7 @@ class Tarefas {
                 elementsOnList.item(i).remove();
             }
             this.lista = [];
+            this.bakeCookieList();
         }
 
         this.readListAsArray = () => {
@@ -98,21 +105,23 @@ class Tarefas {
         }
 
         this.bakeCookieList = () => {
-            var cookie = ["tarefas", '=', JSON.stringify(this.readListAsArray()), '; path=/;'].join('');
+            var cookie = [this.listName, '=', JSON.stringify(this.readListAsArray()), '; SameSite=Lax; path=/;'].join('');
             document.cookie = cookie;
         }
 
-        this.readCookie = () => {
-            var result = document.cookie.match(new RegExp("tarefas" + '=([^;]+)'));
+        this.readCookie = (custom = '') => {
+            var result = document.cookie.match(new RegExp(this.listName + '=([^;]+)'));
+            if (custom != '') result = custom;
             result && (result = JSON.parse(result[1]));
             return result;
         }
 
         this.retakeList = () => {
-            this.clearItens();
             let listRetaken = this.readCookie();
+            if (listRetaken == '' || !listRetaken) return;
+            this.clearItens();
             for (let i=0; i<listRetaken.length; i++) {
-                this.criarItem(listRetaken[i]);
+                this.criarItem(listRetaken[i], true);
             }
         }
     }
@@ -161,4 +170,5 @@ function deleteSelect() {
 // erro.addEventListener("click", tarefas.deletarItem(divItem.id))
 // btn.addEventListener("click", tarefas.criarItem(inputText.value));
 
+tarefas.retakeList();
 btnExcluir.addEventListener("click", deleteSelect);
