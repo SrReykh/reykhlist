@@ -9,15 +9,17 @@ var body = document.getElementById("body");
 
 
 class Tarefas {
-    constructor() {
+    constructor(listName) {
         this.lista = [];
-        this.criarItem = () => { 
-            if (this.lista.includes(inputText.value)) {
+        this.listName = listName;
+        
+        this.criarItem = (text, autosave = true) => {
+            if (this.lista.includes(text)) {
                 erroInput()
                 return;
             }
 
-            if (inputText.value == "" || inputText.value == null || inputText.value.length > 25) {
+            if (text == "" || text == null || text.length > 25) {
                 erroInput()
                 return;
             }
@@ -43,7 +45,7 @@ class Tarefas {
             
             let p = document.createElement("p");
             p.id = "content-text";
-            p.textContent = inputText.value;
+            p.textContent = text;
 
             confirma.appendChild(checkbox);
             divItem.appendChild(confirma);  
@@ -53,8 +55,10 @@ class Tarefas {
 
             normalInput();
 
-            this.lista.push(inputText.value);
+            this.lista.push(text);
             inputText.value = "";
+
+            if (autosave) this.bakeCookieList();
         }
 
         this.deletarItem = (id) => {
@@ -65,11 +69,65 @@ class Tarefas {
             for (let i=0; i<elementsOnList.length; i++) {
                 elementsOnList.item(i).id = i;
             }
+            this.bakeCookieList();
+        }
+        
+        this.bulkDeletarItem = (ids) => {
+            for (let i=0;i<ids.length;i++) {
+                let itemDelete = document.getElementById(ids[i].toString());
+                itemDelete.remove();
+                this.lista.splice(ids[i], 1);
+            }
+            let elementsOnList = document.getElementsByClassName('item');
+            for (let j=0; j<elementsOnList.length; j++) {
+                elementsOnList.item(j).id = j;
+            }
+            this.bakeCookieList();
+        }
+
+        this.clearItens = () => {
+            let elementsOnList = document.getElementsByClassName('item');
+            for (let i=0; i<elementsOnList.length; i++) {
+                elementsOnList.item(i).remove();
+            }
+            this.lista = [];
+            this.bakeCookieList();
+        }
+
+        this.readListAsArray = () => {
+            let listArray = []
+            let string = "";
+            for (let i=0; i<this.lista.length; i++) {
+                string = document.getElementById(i).getElementsByClassName('content').item(0).children.item(0).innerHTML;
+                listArray.push(string);
+            }
+            return listArray;
+        }
+
+        this.bakeCookieList = () => {
+            var cookie = [this.listName, '=', JSON.stringify(this.readListAsArray()), '; SameSite=Lax; path=/;'].join('');
+            document.cookie = cookie;
+        }
+
+        this.readCookie = (custom = '') => {
+            var result = document.cookie.match(new RegExp(this.listName + '=([^;]+)'));
+            if (custom != '') result = custom;
+            result && (result = JSON.parse(result[1]));
+            return result;
+        }
+
+        this.retakeList = () => {
+            let listRetaken = this.readCookie();
+            if (listRetaken == '' || !listRetaken) return;
+            this.clearItens();
+            for (let i=0; i<listRetaken.length; i++) {
+                this.criarItem(listRetaken[i], true);
+            }
         }
     }
 }
 
-var tarefas = new Tarefas;
+var tarefas = new Tarefas("tarefas");
 
 // Verifica se a caixa foi marcada 
 function verificarSelecao(checkbox) {
@@ -98,13 +156,19 @@ function exclusao() {
         btnExcluir.style.display = "block";
         btnRemove.style.backgroundColor = "#000000d0";
         btnRemove.value = "Cancelar"
-    }
+    }    
+}
 
-    
+function deleteSelect() {
+    let checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+    let checked = [];
+    for (let i = 0; i < checkboxes.length; i++) { checked.push(checkboxes.item(i).parentElement.parentElement.id) }
+    tarefas.bulkDeletarItem(checked);
 }
 
 // var erro = document.getElementById("btnErro");
-
 // erro.addEventListener("click", tarefas.deletarItem(divItem.id))
+// btn.addEventListener("click", tarefas.criarItem(inputText.value));
 
-btn.addEventListener("click", tarefas.criarItem);
+tarefas.retakeList();
+btnExcluir.addEventListener("click", deleteSelect);
