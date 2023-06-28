@@ -6,7 +6,8 @@ var pErro = document.getElementById("error");
 var pAviso = document.getElementById("aviso");
 var listaElement = document.querySelector(".lista");
 var body = document.getElementById("body");
-
+var btndarkmode = document.getElementById("btn-darkmode");
+var darkmode;
 
 class Tarefas {
     constructor(listName) {
@@ -166,9 +167,25 @@ function deleteSelect() {
     tarefas.bulkDeletarItem(checked);
 }
 
+
+function darkMode() {
+    var r = document.querySelector(":root");
+    if (typeof darkmode == 'undefined') darkmode = false
+
+    if (!darkmode) {
+        r.style.setProperty('--background', '#0c0c0c')
+        r.style.setProperty('--text-color', 'white')
+        darkmode = true;
+    } else {
+        r.style.setProperty('--background', 'white');
+        r.style.setProperty('--text-color', 'black')
+        darkmode = false;
+    }
+}
 // var erro = document.getElementById("btnErro");
 // erro.addEventListener("click", tarefas.deletarItem(divItem.id))
 // btn.addEventListener("click", tarefas.criarItem(inputText.value));
 
 tarefas.retakeList();
 btnExcluir.addEventListener("click", deleteSelect);
+btndarkmode.addEventListener("click", darkMode);
