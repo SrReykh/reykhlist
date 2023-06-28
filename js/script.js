@@ -1,9 +1,12 @@
 var btn = document.getElementById("btn");
+var btnRemove = document.getElementById("btnRemove");
+var btnExcluir = document.getElementById("btnExcluir");
 var inputText = document.getElementById("input-valor");
 var pErro = document.getElementById("error");
 var pAviso = document.getElementById("aviso");
 var listaElement = document.querySelector(".lista");
 var body = document.getElementById("body");
+
 
 class Tarefas {
     constructor() {
@@ -14,7 +17,7 @@ class Tarefas {
                 return;
             }
 
-            if (inputText.value == "" || inputText.value == null || inputText.value.length > 30) {
+            if (inputText.value == "" || inputText.value == null || inputText.value.length > 25) {
                 erroInput()
                 return;
             }
@@ -35,11 +38,13 @@ class Tarefas {
             let content = document.createElement("div");
             content.className = "content";
             content.id = "content";
+            content.style.width = "500px";
+            content.style.height = "60px";
             
             let p = document.createElement("p");
             p.id = "content-text";
             p.textContent = inputText.value;
-            
+
             confirma.appendChild(checkbox);
             divItem.appendChild(confirma);  
             content.appendChild(p);
@@ -48,12 +53,10 @@ class Tarefas {
 
             normalInput();
 
-            let tamanhoAtual = listaElement.clientHeight;
-            listaElement.style.height = (tamanhoAtual + 98) + "px";
-
             this.lista.push(inputText.value);
             inputText.value = "";
         }
+
         this.deletarItem = (id) => {
             let itemDelete = document.getElementById(id.toString());
             itemDelete.remove();
@@ -86,5 +89,22 @@ function normalInput() {
     pAviso.innerText = "";
 }
 
-btn.addEventListener("click", tarefas.criarItem);
+function exclusao() {
+    if (btnExcluir.style.display == "block") {
+        btnExcluir.style.display = "none";
+        btnRemove.style.backgroundColor = "black";
+        btnRemove.value = "Remover"
+    } else {
+        btnExcluir.style.display = "block";
+        btnRemove.style.backgroundColor = "#000000d0";
+        btnRemove.value = "Cancelar"
+    }
 
+    
+}
+
+// var erro = document.getElementById("btnErro");
+
+// erro.addEventListener("click", tarefas.deletarItem(divItem.id))
+
+btn.addEventListener("click", tarefas.criarItem);

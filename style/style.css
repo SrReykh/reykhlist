@@ -48,8 +48,8 @@ main {
 
 }
 
-.add {
-    width: 700px;
+.painel {
+    width: 800px;
     margin-left: 20px;
     margin-top: 20px;
     display: flex;
@@ -72,7 +72,7 @@ input[type=button]:hover {
     opacity: 0.9;
 }
 
-.add > input[type=text] {
+.painel > input[type=text] {
     margin-left: 10px;
     outline: none;
     border-radius: 12px;
@@ -88,12 +88,9 @@ input[type=button]:hover {
 
 .lista {
     margin-top : 20px;
-  
     width: 690px;
     height: 0px;
-    /*background-color: var(--cordark);*/
     border-radius: 20px;
-    box-shadow: 5px 5px rgba(0, 0, 0, 0.035);
     display: flex;
     flex-direction: column;
     transition: ease-in-out;
@@ -131,7 +128,7 @@ input[type=button]:hover {
 
 .content {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -141,3 +138,13 @@ input[type=button]:hover {
     color: rgb(12, 12, 12);
 }
 
+#btnErro {
+    width: 15px;
+    height: 15px;
+    background-color: red;
+}
+
+#btnExcluir {
+    display: none;
+    background-color: rgb(177, 4, 4);
+}
