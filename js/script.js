@@ -7,6 +7,7 @@ var pAviso = document.getElementById("aviso");
 var listaElement = document.querySelector(".lista");
 var body = document.getElementById("body");
 var btndarkmode = document.getElementById("btn-darkmode");
+var themeicon = document.getElementById("darkmode");
 var darkmode;
 
 class Tarefas {
@@ -74,10 +75,10 @@ class Tarefas {
         }
         
         this.bulkDeletarItem = (ids) => {
+            this.lista.splice(0, ids.length)
             for (let i=0;i<ids.length;i++) {
                 let itemDelete = document.getElementById(ids[i].toString());
                 itemDelete.remove();
-                this.lista.splice(ids[i], 1);
             }
             let elementsOnList = document.getElementsByClassName('item');
             for (let j=0; j<elementsOnList.length; j++) {
@@ -95,23 +96,13 @@ class Tarefas {
             this.bakeCookieList();
         }
 
-        this.readListAsArray = () => {
-            let listArray = []
-            let string = "";
-            for (let i=0; i<this.lista.length; i++) {
-                string = document.getElementById(i).getElementsByClassName('content').item(0).children.item(0).innerHTML;
-                listArray.push(string);
-            }
-            return listArray;
-        }
-
         this.bakeCookieList = () => {
-            var cookie = [this.listName, '=', JSON.stringify(this.readListAsArray()), '; SameSite=Lax; path=/;'].join('');
+            let cookie = [this.listName, '=', JSON.stringify(this.lista), '; SameSite=Lax; path=/;'].join('');
             document.cookie = cookie;
         }
 
         this.readCookie = (custom = '') => {
-            var result = document.cookie.match(new RegExp(this.listName + '=([^;]+)'));
+            let result = document.cookie.match(new RegExp(this.listName + '=([^;]+)'));
             if (custom != '') result = custom;
             result && (result = JSON.parse(result[1]));
             return result;
@@ -132,7 +123,7 @@ var tarefas = new Tarefas("tarefas");
 
 // Verifica se a caixa foi marcada 
 function verificarSelecao(checkbox) {
-    var texto = checkbox.closest('.item');
+    let texto = checkbox.closest('.item');
     checkbox.checked == true ? texto.style.textDecoration = "line-through" : texto.style.textDecoration = "none";
 }
 
@@ -168,24 +159,56 @@ function deleteSelect() {
 }
 
 
-function darkMode() {
-    var r = document.querySelector(":root");
+function toggleTheme(custom = '') {
+    let r = document.querySelector(":root");
     if (typeof darkmode == 'undefined') darkmode = false
 
-    if (!darkmode) {
-        r.style.setProperty('--background', '#0c0c0c')
-        r.style.setProperty('--text-color', 'white')
+    if (!darkmode || custom == 'dark') {
+        r.style.setProperty('--background', '#0c0c0c');
+        r.style.setProperty('--text-color', 'white');
+        
+        themeicon.src = './site/images/sun.svg';
+        themeicon.style.filter = 'invert(100%)';
         darkmode = true;
-    } else {
+    } else if (darkmode || custom == 'white') {
         r.style.setProperty('--background', 'white');
-        r.style.setProperty('--text-color', 'black')
+        r.style.setProperty('--text-color', 'black');
+        
+        themeicon.src = './site/images/moon.svg';
+        themeicon.style.filter = 'invert(0%)';
         darkmode = false;
     }
+
+    let cookie = ['theme', '=', JSON.stringify(darkmode), '; SameSite=Lax; path=/;'].join('');
+    document.cookie = cookie
 }
+
+function restoreTheme() {
+    let result = document.cookie.match(new RegExp('theme' + '=([^;]+)'));
+    result && (result = JSON.parse(result[1]));
+    if (result == null || result == undefined) return;
+    if (result) { toggleTheme(); }
+    darkmode = result;
+}
+
 // var erro = document.getElementById("btnErro");
 // erro.addEventListener("click", tarefas.deletarItem(divItem.id))
 // btn.addEventListener("click", tarefas.criarItem(inputText.value));
 
 tarefas.retakeList();
+restoreTheme();
 btnExcluir.addEventListener("click", deleteSelect);
-btndarkmode.addEventListener("click", darkMode);
+btndarkmode.addEventListener("click", toggleTheme);
+
+inputText.addEventListener("keypress", () => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        btn.click();
+    }
+})
+
+document.addEventListener("keypress", () => {
+    if (event.key == "r") btnRemove.click();
+    if (event.key == "t") btndarkmode.click();
+    if (event.key == "?") alert("?");
+})
