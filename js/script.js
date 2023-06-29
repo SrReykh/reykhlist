@@ -208,7 +208,9 @@ inputText.addEventListener("keypress", () => {
 })
 
 document.addEventListener("keypress", () => {
-    if (event.key == "r") btnRemove.click();
-    if (event.key == "t") btndarkmode.click();
-    if (event.key == "?") alert("?");
+    if (document.activeElement != inputText) {
+        if (event.key == "r") btnRemove.click();
+        if (event.key == "t") btndarkmode.click();
+        if (event.key == "?") alert("?");
+    }
 })
